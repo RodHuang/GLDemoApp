@@ -20,6 +20,12 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         ShaderUtils.setupShader();
+        GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+        GLES20.glEnable(GLES20.GL_BLEND);
+        GLES20.glEnable(GLES20.GL_CULL_FACE);
+        GLES20.glCullFace(GLES20.GL_BACK);
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+        GLES20.glDepthFunc(GLES20.GL_LEQUAL);
     }
 
     @Override
@@ -33,6 +39,7 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
         }
         float ratio = (float) width / (float) height;
         Matrix.frustumM(mMatrixProjection, 0, -ratio, ratio, -1, 1, 1, 100);
+//        Matrix.perspectiveM(mMatrixProjection, 0, 1f, ratio, 0, 1000);
         GLES20.glViewport(0, 0, width, height);
     }
 
@@ -45,7 +52,15 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
                 0f, 0, 1, 0.0f);
         Matrix.multiplyMM(mMatrixProjectionAndView, 0, mMatrixProjection, 0,
                 mMatrixView, 0);
-        Plane p = new Plane(200,200,1,1);
+        Triangle t = new Triangle();
+        t.setColors(new float[]{1f ,0f, 0f, 1f, 0f, 1f, 0f, 1f, 0f, 0f, 1f, 1f});
+        Plane p = new Plane(1, 1, 1, 1);
+        p.setColors(new float[]{1f ,0f, 0f, 1f, 0f, 1f, 0f, 1f, 0f, 0f, 1f, 1f, 1f, 1f, 1f, 1f});
+//        p.rotateZ(45f);
+//        p.scale(2f, .5f, 1f);
+//        p.translate(.5f, .5f, 0f);
+//        p.rotateZ(10f);
         p.draw(mMatrixProjectionAndView);
+        t.draw(mMatrixProjectionAndView);
     }
 }

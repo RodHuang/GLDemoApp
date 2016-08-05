@@ -72,11 +72,11 @@ public class ShaderUtils {
                 "a_Color");
         sMatrixhandle = GLES20.glGetUniformLocation(sShaderProgram,
                 "u_MVPMatrix");
-        sSamplerLoc = GLES20.glGetUniformLocation(sShaderProgram,
-                "s_texture");
+//        sSamplerLoc = GLES20.glGetUniformLocation(sShaderProgram,
+//                "s_texture");
 
         GLES20.glEnableVertexAttribArray(sPositionHandle);
-        GLES20.glEnableVertexAttribArray(sTexCoordLoc);
+        GLES20.glEnableVertexAttribArray(sColorHandle);
     }
 
     public static void setupShader() {
@@ -91,6 +91,7 @@ public class ShaderUtils {
         GLES20.glAttachShader(sShaderProgram, vertexShader);
         GLES20.glAttachShader(sShaderProgram, fragmentShader);
         GLES20.glLinkProgram(sShaderProgram);
+        GLES20.glUseProgram(sShaderProgram);
 
         initShaderHandles();
     }
