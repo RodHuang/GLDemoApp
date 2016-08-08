@@ -33,9 +33,12 @@ public abstract class Mesh {
     // Smooth Colors
     private FloatBuffer colorBuffer = null;
 
+    private static FloatBuffer lightBuffer = null;
+
+
     private float[] transformM = new float[]{1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f,1f, 0f, 0f, 0f, 0f, 1f};
 
-    public void draw(float[] m) {
+    public void draw(float[] matrixView, float[] matrixProjection) {
         // Counter-clockwise winding.
         GLES20.glFrontFace(GLES20.GL_CCW);
         // Enable face culling.
@@ -46,8 +49,8 @@ public abstract class Mesh {
         // coordinates to use when rendering.
         GLES20.glVertexAttribPointer(ShaderUtils.sPositionHandle, 3, GLES20.GL_FLOAT,
                 false, 0, verticesBuffer);
-//        GLES20.glVertexAttribPointer(ShaderUtils.sTexCoordLoc, 2, GLES20.GL_FLOAT, false,
-//                0, colorBuffer);
+        GLES20.glVertexAttribPointer(ShaderUtils.sNormalHandle, 3, GLES20.GL_FLOAT,
+                false, 0, normalBuffer);
         if (colorBuffer == null) {
             float[] colors = new float[numOfVertices * 4];
             for (int i = 0; i < numOfVertices; i++) {
@@ -59,10 +62,12 @@ public abstract class Mesh {
         }
         GLES20.glVertexAttribPointer(ShaderUtils.sColorHandle, 4, GLES20.GL_FLOAT, false,
                 0, colorBuffer);
-        Matrix.multiplyMM(transformM, 0, m, 0, transformM, 0);
-        GLES20.glUniformMatrix4fv(ShaderUtils.sMatrixhandle, 1, false, transformM, 0);
+        GLES20.glUniform3fv(ShaderUtils.sLightPosHandle, 1, lightBuffer);
+        GLES20.glUniformMatrix4fv(ShaderUtils.sMVMatrixHandle, 1, false, transformM, 0);
+        Matrix.multiplyMM(transformM, 0, matrixView, 0, transformM, 0);
+        Matrix.multiplyMM(transformM, 0, matrixProjection, 0, transformM, 0);
+        GLES20.glUniformMatrix4fv(ShaderUtils.sMVPMatrixHandle, 1, false, transformM, 0);
         Matrix.setIdentityM(transformM, 0);
-//        GLES20.glUniform1i(ShaderUtils.sSamplerLoc, 0);
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, numOfIndices,
                 GLES20.GL_UNSIGNED_SHORT, indicesBuffer);
@@ -74,7 +79,7 @@ public abstract class Mesh {
         // a float is 4 bytes, therefore we multiply the number if
         // vertices with 4.
         for (int i = 0; i < vertices.length; i++) {
-            Log.d("Rod", vertices[i] + "");
+            Log.d("Rod", vertices[i] + " ");
         }
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
         vbb.order(ByteOrder.nativeOrder());
@@ -122,6 +127,16 @@ public abstract class Mesh {
         normalBuffer = cbb.asFloatBuffer();
         normalBuffer.put(normals);
         normalBuffer.position(0);
+    }
+
+    public static void setLightPos(float[] lightPos) {
+        Log.d("Rod", "setLightPos");
+        // float has 4 bytes.
+        ByteBuffer cbb = ByteBuffer.allocateDirect(lightPos.length * 4);
+        cbb.order(ByteOrder.nativeOrder());
+        lightBuffer = cbb.asFloatBuffer();
+        lightBuffer.put(lightPos);
+        lightBuffer.position(0);
     }
 
     public void translate(float x, float y, float z) {

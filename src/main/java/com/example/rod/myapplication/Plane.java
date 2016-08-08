@@ -18,6 +18,8 @@ public class Plane extends Mesh {
                  int heightSegments) {
         float[] vertices = new float[(widthSegments + 1) * (heightSegments + 1)
                 * 3];
+        float[] normals = new float[(widthSegments + 1) * (heightSegments + 1)
+                * 3];
         short[] indices = new short[(widthSegments) * (heightSegments)
                 * 6];
 
@@ -33,6 +35,9 @@ public class Plane extends Mesh {
                 vertices[currentVertex] = xOffset + x * xWidth;
                 vertices[currentVertex + 1] = yOffset + y * yHeight;
                 vertices[currentVertex + 2] = 0;
+                normals[currentVertex] = 0f;
+                normals[currentVertex + 1] = 0f;
+                normals[currentVertex + 2] = 1f;
                 currentVertex += 3;
 
                 int n = y * (widthSegments + 1) + x;
@@ -54,6 +59,7 @@ public class Plane extends Mesh {
 
         setIndices(indices);
         setVertices(vertices);
+        setNormals(normals);
     }
 
 }

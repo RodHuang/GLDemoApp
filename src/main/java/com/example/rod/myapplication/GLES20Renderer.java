@@ -41,6 +41,7 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
         Matrix.frustumM(mMatrixProjection, 0, -ratio, ratio, -1, 1, 1, 100);
 //        Matrix.perspectiveM(mMatrixProjection, 0, 1f, ratio, 0, 1000);
         GLES20.glViewport(0, 0, width, height);
+        Mesh.setLightPos(new float[]{-.5f, -.25f, 1f});
     }
 
     @Override
@@ -50,8 +51,8 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
 
         Matrix.setLookAtM(mMatrixView, 0, 0, 0, 1f, 0, 0,
                 0f, 0, 1, 0.0f);
-        Matrix.multiplyMM(mMatrixProjectionAndView, 0, mMatrixProjection, 0,
-                mMatrixView, 0);
+//        Matrix.multiplyMM(mMatrixProjectionAndView, 0, mMatrixProjection, 0,
+//                mMatrixView, 0);
         Triangle t = new Triangle();
         t.setColors(new float[]{1f ,0f, 0f, 1f, 0f, 1f, 0f, 1f, 0f, 0f, 1f, 1f});
         Plane p = new Plane(1, 1, 1, 1);
@@ -60,7 +61,7 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
 //        p.scale(2f, .5f, 1f);
 //        p.translate(.5f, .5f, 0f);
 //        p.rotateZ(10f);
-        p.draw(mMatrixProjectionAndView);
-        t.draw(mMatrixProjectionAndView);
+//        p.draw(mMatrixView, mMatrixProjection);
+        t.draw(mMatrixView, mMatrixProjection);
     }
 }

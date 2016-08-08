@@ -15,33 +15,49 @@ public class ShaderUtils {
     public static int sPositionHandle;
     public static int sTexCoordLoc;
     public static int sColorHandle;
-    public static int sMatrixhandle;
+    public static int sMVPMatrixHandle;
+    public static int sMVMatrixHandle;
+    public static int sLightPosHandle;
+    public static int sNormalHandle;
     public static int sSamplerLoc;
 
     private static final String _vertexShader =
-                    "uniform mat4 u_MVPMatrix;        \n"     // A constant representing the combined model/view/projection matrix.
+                    "uniform mat4 u_MVPMatrix;                                             \n"
+                    + "uniform mat4 u_MVMatrix;                                            \n"
 
-                    + "attribute vec4 a_Position;     \n"     // Per-vertex position information we will pass in.
-                    + "attribute vec4 a_Color;        \n"     // Per-vertex color information we will pass in.
+                    + "attribute vec4 a_Position;                                          \n"
+                    + "attribute vec4 a_Color;                                             \n"
+                    + "attribute vec3 a_Normal;                                            \n"
 
-                    + "varying vec4 v_Color;          \n"     // This will be passed into the fragment shader.
+                    + "varying vec3 v_Position;                                            \n"
+                    + "varying vec4 v_Color;                                               \n"
+                    + "varying vec3 v_Normal;                                              \n"
 
-                    + "void main()                    \n"     // The entry point for our vertex shader.
-                    + "{                              \n"
-                    + "   v_Color = a_Color;          \n"     // Pass the color through to the fragment shader.
-                    // It will be interpolated across the triangle.
-                    + "   gl_Position = u_MVPMatrix   \n"     // gl_Position is a special variable used to store the final position.
-                    + "               * a_Position;   \n"     // Multiply the vertex by the matrix to get the final point in
-                    + "}                              \n";    // normalized screen coordinates.
+                    + "void main()                                                         \n"
+                    + "{                                                                   \n"
+                    + "   v_Position = vec3(u_MVMatrix * a_Position);                      \n"
+                    + "   v_Color = a_Color;                                               \n"
+                    + "   v_Normal = vec3(u_MVMatrix * vec4(a_Normal, 0.0));               \n"
+                    + "   gl_Position = u_MVPMatrix                                        \n"
+                    + "               * a_Position;                                        \n"
+                    + "}                                                                   \n";
     private static final String _fragmentShader =
-                    "precision mediump float;       \n"     // Set the default precision to medium. We don't need as high of a
-                    // precision in the fragment shader.
-                    + "varying vec4 v_Color;          \n"     // This is the color from the vertex shader interpolated across the
-                    // triangle per fragment.
-                    + "void main()                    \n"     // The entry point for our fragment shader.
-                    + "{                              \n"
-                    + "   gl_FragColor = v_Color;     \n"     // Pass the color directly through the pipeline.
-                    + "}                              \n";
+                    "precision mediump float;                                              \n"
+
+                    + "uniform vec3 u_LightPos;                                             \n"
+
+                    + "varying vec4 v_Color;                                               \n"
+                    + "varying vec3 v_Position;                                            \n"
+                    + "varying vec3 v_Normal;                                              \n"
+
+                    + "void main()                                                         \n"
+                    + "{                                                                   \n"
+                    + "   float distance = length(u_LightPos - v_Position);                \n"
+                    + "   vec3 lightVector = normalize(u_LightPos - v_Position);           \n"
+                    + "   float diffuse = max(dot(v_Normal, lightVector), 0.1);            \n"
+                    + "   diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));\n"
+                    + "   gl_FragColor = (v_Color * diffuse) + (v_Color * 0.25);                                \n"
+                    + "}                                                                   \n";
 
     public static int loadShader(int type, String shaderCode) {
         int shader = GLES20.glCreateShader(type);
@@ -52,8 +68,8 @@ public class ShaderUtils {
         int[] compiled = new int[1];
         GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
         if (compiled[0] == 0) {
-            Log.d(TAG, "Could not compile shader " + type + ":");
-            Log.d(TAG, GLES20.glGetShaderInfoLog(shader));
+            Log.d("Rod", "Could not compile shader " + type + ":");
+            Log.d("Rod", GLES20.glGetShaderInfoLog(shader));
             GLES20.glDeleteShader(shader);
             shader = 0;
         }
@@ -66,17 +82,20 @@ public class ShaderUtils {
 
         sPositionHandle = GLES20.glGetAttribLocation(sShaderProgram,
                 "a_Position");
-//        sTexCoordLoc = GLES20.glGetAttribLocation(sShaderProgram,
-//                "a_texCoord");
         sColorHandle = GLES20.glGetAttribLocation(sShaderProgram,
                 "a_Color");
-        sMatrixhandle = GLES20.glGetUniformLocation(sShaderProgram,
+        sNormalHandle =  GLES20.glGetAttribLocation(sShaderProgram,
+                "a_Normal");
+        sMVPMatrixHandle = GLES20.glGetUniformLocation(sShaderProgram,
                 "u_MVPMatrix");
-//        sSamplerLoc = GLES20.glGetUniformLocation(sShaderProgram,
-//                "s_texture");
+        sMVMatrixHandle = GLES20.glGetUniformLocation(sShaderProgram,
+                "u_MVMatrix");
+        sLightPosHandle = GLES20.glGetUniformLocation(sShaderProgram,
+                "u_LightPos");
 
         GLES20.glEnableVertexAttribArray(sPositionHandle);
         GLES20.glEnableVertexAttribArray(sColorHandle);
+        GLES20.glEnableVertexAttribArray(sNormalHandle);
     }
 
     public static void setupShader() {
@@ -99,6 +118,7 @@ public class ShaderUtils {
     public static void cleanup() {
         GLES20.glDisableVertexAttribArray(sPositionHandle);
         GLES20.glDisableVertexAttribArray(sColorHandle);
+        GLES20.glDisableVertexAttribArray(sNormalHandle);
         GLES20.glDeleteShader(sShaderProgram);
     }
 }
