@@ -20,6 +20,8 @@ public class Plane extends Mesh {
                 * 3];
         float[] normals = new float[(widthSegments + 1) * (heightSegments + 1)
                 * 3];
+        float[] textureCoord = new float[(widthSegments + 1) * (heightSegments + 1)
+                * 2];
         short[] indices = new short[(widthSegments) * (heightSegments)
                 * 6];
 
@@ -29,6 +31,7 @@ public class Plane extends Mesh {
         float yHeight = height / (heightSegments);
         int currentVertex = 0;
         int currentIndex = 0;
+        int currentTexture = 0;
         short w = (short) (widthSegments + 1);
         for (int y = 0; y < heightSegments + 1; y++) {
             for (int x = 0; x < widthSegments + 1; x++) {
@@ -38,6 +41,9 @@ public class Plane extends Mesh {
                 normals[currentVertex] = 0f;
                 normals[currentVertex + 1] = 0f;
                 normals[currentVertex + 2] = 1f;
+                textureCoord[currentTexture] = (float) x / (float) widthSegments;
+                textureCoord[currentTexture + 1] = 1f - (float) y / (float) heightSegments;
+                currentTexture += 2;
                 currentVertex += 3;
 
                 int n = y * (widthSegments + 1) + x;
@@ -60,6 +66,7 @@ public class Plane extends Mesh {
         setIndices(indices);
         setVertices(vertices);
         setNormals(normals);
+        setTextureCoord(textureCoord);
     }
 
 }
