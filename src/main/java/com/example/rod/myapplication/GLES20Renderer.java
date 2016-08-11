@@ -85,6 +85,7 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
             c.setSpecColor(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()});
             c.setSpecPow(8);
             c.setUseTexture(false);
+            // test
             spheres[i] = new Geometry(c);
             nodes[i] = new Geometry(null);
             nodes[i].add(spheres[i]);
