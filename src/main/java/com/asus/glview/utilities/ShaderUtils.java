@@ -1,4 +1,4 @@
-package com.example.rod.myapplication;
+package com.asus.glview.utilities;
 
 import android.opengl.GLES20;
 import android.util.Log;
@@ -31,7 +31,7 @@ public class ShaderUtils {
     public static int sTextureDiffuseLevelHandle;
 
     private static final String _vertexShader =
-                    "uniform mat4 u_PMatrix;                                             \n"
+            "uniform mat4 u_PMatrix;                                             \n"
                     + "uniform mat4 u_VMatrix;                                            \n"
                     + "uniform mat4 u_MMatrix;                                            \n"
                     + "uniform mat4 u_NMatrix;                                            \n"
@@ -58,7 +58,7 @@ public class ShaderUtils {
                     + "               * a_Position;                                        \n"
                     + "}                                                                   \n";
     private static final String _fragmentShader =
-                    "precision mediump float;                                              \n"
+            "precision mediump float;                                              \n"
 
                     + "uniform vec3 u_LightPos;                                             \n"
                     + "uniform mat4 u_VMatrix;                                            \n"
@@ -134,7 +134,7 @@ public class ShaderUtils {
                 "a_textureCoord");
         sColorHandle = GLES20.glGetAttribLocation(sShaderProgram,
                 "a_Color");
-        sNormalHandle =  GLES20.glGetAttribLocation(sShaderProgram,
+        sNormalHandle = GLES20.glGetAttribLocation(sShaderProgram,
                 "a_Normal");
         sPMatrixHandle = GLES20.glGetUniformLocation(sShaderProgram,
                 "u_PMatrix");

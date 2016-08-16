@@ -1,4 +1,4 @@
-package com.example.rod.myapplication;
+package com.asus.glview.geometry;
 
 import android.opengl.Matrix;
 
@@ -8,6 +8,7 @@ import android.opengl.Matrix;
 
 public class World extends Geometry {
     private float[] idendityM = new float[16];
+
     public World() {
         super(null);
         Matrix.setIdentityM(idendityM, 0);

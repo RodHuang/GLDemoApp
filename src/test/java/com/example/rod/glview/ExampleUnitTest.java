@@ -1,4 +1,4 @@
-package com.example.rod.myapplication;
+package com.example.rod.glview;
 
 import org.junit.Test;
 

@@ -1,8 +1,10 @@
-package com.example.rod.myapplication;
+package com.asus.glview.mesh;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
+
+import com.asus.glview.utilities.ShaderUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -15,6 +17,9 @@ import java.nio.ShortBuffer;
 
 public abstract class Mesh {
 
+    private static int sCurrentTexture = -1;
+
+    private int mTexture = -1;
     // Our vertex buffer.
     private FloatBuffer verticesBuffer = null;
 
@@ -43,10 +48,14 @@ public abstract class Mesh {
     private FloatBuffer diffuseBuffer = null;
     private FloatBuffer specBuffer = null;
 
-    private float[] normalM = new float[]{1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f,1f, 0f, 0f, 0f, 0f, 1f};
+    private float[] normalM = new float[]{1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f};
 
     public void draw(float[] matrixView, float[] matrixProjection, float[] matrixModel) {
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, TextureUtils.sTexture[0]);
+        if (sCurrentTexture == -1 || mTexture != sCurrentTexture) {
+            sCurrentTexture = mTexture;
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, sCurrentTexture);
+        }
+        Log.d("Rod", "draw texture: " + sCurrentTexture);
         // Counter-clockwise winding.
 //        GLES20.glFrontFace(GLES20.GL_CCW);
         // Enable face culling.
@@ -115,12 +124,8 @@ public abstract class Mesh {
     }
 
     protected void setVertices(float[] vertices) {
-        Log.d("Rod", "setVertices");
         // a float is 4 bytes, therefore we multiply the number if
         // vertices with 4.
-        for (int i = 0; i < vertices.length; i++) {
-            Log.d("Rod", vertices[i] + " ");
-        }
         ByteBuffer vbb = ByteBuffer.allocateDirect(vertices.length * 4);
         vbb.order(ByteOrder.nativeOrder());
         verticesBuffer = vbb.asFloatBuffer();
@@ -130,10 +135,6 @@ public abstract class Mesh {
     }
 
     protected void setIndices(short[] indices) {
-        Log.d("Rod", "setIndices");
-        for (int i = 0; i < indices.length; i++) {
-            Log.d("Rod", indices[i] + "");
-        }
         // short is 2 bytes, therefore we multiply the number if
         // vertices with 2.
         ByteBuffer ibb = ByteBuffer.allocateDirect(indices.length * 2);
@@ -178,6 +179,7 @@ public abstract class Mesh {
         lightBuffer.put(lightPos);
         lightBuffer.position(0);
     }
+
     public void setAmbientColor(float[] ambientColor) {
         // float has 4 bytes.
         ByteBuffer cbb = ByteBuffer.allocateDirect(ambientColor.length * 4);
@@ -186,6 +188,7 @@ public abstract class Mesh {
         ambientBuffer.put(ambientColor);
         ambientBuffer.position(0);
     }
+
     public void setDiffuseColor(float[] diffuseColor) {
         // float has 4 bytes.
         ByteBuffer cbb = ByteBuffer.allocateDirect(diffuseColor.length * 4);
@@ -194,6 +197,7 @@ public abstract class Mesh {
         diffuseBuffer.put(diffuseColor);
         diffuseBuffer.position(0);
     }
+
     public void setSpecColor(float[] specColor) {
         // float has 4 bytes.
         ByteBuffer cbb = ByteBuffer.allocateDirect(specColor.length * 4);
@@ -206,9 +210,11 @@ public abstract class Mesh {
     public void setSpecPow(float specPow) {
         this.specPow = specPow;
     }
+
     public void setUseTexture(boolean useTexture) {
         this.useTexture = useTexture;
     }
+
     public void setUseLight(boolean useLight) {
         this.useLight = useLight;
     }
@@ -216,16 +222,34 @@ public abstract class Mesh {
     public void setTextureDiffuseLevel(float textureDiffuseLevel) {
         this.textureDiffuseLevel = textureDiffuseLevel;
     }
+
     public void setTextureCoord(float[] textureCoord) {
-        Log.d("Rod", "setTextureCoord");
-        for (int i = 0; i < textureCoord.length; i++) {
-            Log.d("Rod", textureCoord[i] + "");
-        }
         // float has 4 bytes.
         ByteBuffer cbb = ByteBuffer.allocateDirect(textureCoord.length * 4);
         cbb.order(ByteOrder.nativeOrder());
         textureBuffer = cbb.asFloatBuffer();
         textureBuffer.put(textureCoord);
         textureBuffer.position(0);
+    }
+
+    public void setTexture(int texture) {
+        mTexture = texture;
+    }
+
+    public int getTexture() {
+        return mTexture;
+    }
+
+    @Override
+    public String toString() {
+        return "Mesh{" +
+                "mTexture=" + mTexture +
+                ", useLight=" + useLight +
+                ", useTexture=" + useTexture +
+                '}';
+    }
+
+    public static void resetBoundTexture() {
+        sCurrentTexture = -1;
     }
 }

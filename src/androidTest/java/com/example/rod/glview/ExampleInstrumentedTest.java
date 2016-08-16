@@ -1,4 +1,4 @@
-package com.example.rod.myapplication;
+package com.example.rod.glview;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.rod.myapplication", appContext.getPackageName());
+        assertEquals("com.example.rod.com.asus.glview", appContext.getPackageName());
     }
 }

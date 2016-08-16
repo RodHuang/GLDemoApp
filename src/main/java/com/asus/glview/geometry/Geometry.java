@@ -1,6 +1,8 @@
-package com.example.rod.myapplication;
+package com.asus.glview.geometry;
 
 import android.opengl.Matrix;
+
+import com.asus.glview.mesh.Mesh;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ public class Geometry {
     public void remove(Geometry child) {
         mChildren.remove(child);
     }
+
     public void clear() {
         mChildren.clear();
     }
@@ -64,16 +67,30 @@ public class Geometry {
     public void identityMatrixModel() {
         Matrix.setIdentityM(mLocalMatrix, 0);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        if (!mChildren.isEmpty()) {
+            b.append("Childern: ");
+            for (Geometry g : mChildren) {
+                b.append(g.toString());
+            }
+        }
+        return "Geometry{" +
+                "mMesh=" + mMesh + " " + b +
+                '}';
+    }
+
     public void draw(float[] matrixView, float[] matrixProjection, float[] matrixParent) {
-        Matrix.multiplyMM(mLocalMatrix, 0, matrixParent, 0, mLocalMatrix, 0);
+        Matrix.multiplyMM(tempM, 0, matrixParent, 0, mLocalMatrix, 0);
         if (mMesh != null) {
-            mMesh.draw(matrixView, matrixProjection, mLocalMatrix);
+            mMesh.draw(matrixView, matrixProjection, tempM);
         }
         if (!mChildren.isEmpty()) {
             for (Geometry geometry : mChildren) {
-                geometry.draw(matrixView, matrixProjection, mLocalMatrix);
+                geometry.draw(matrixView, matrixProjection, tempM);
             }
         }
-        identityMatrixModel();
     }
 }

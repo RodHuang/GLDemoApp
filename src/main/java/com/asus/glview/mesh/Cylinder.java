@@ -1,6 +1,4 @@
-package com.example.rod.myapplication;
-
-import android.util.Log;
+package com.asus.glview.mesh;
 
 /**
  * Created by root on 8/9/16.
