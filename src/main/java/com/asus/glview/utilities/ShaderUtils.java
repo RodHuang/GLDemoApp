@@ -48,7 +48,7 @@ public class ShaderUtils {
 
                     + "void main()                                                         \n"
                     + "{                                                                   \n"
-                    + "   v_Position = vec3(u_VMatrix * u_MMatrix * a_Position);                      \n"
+                    + "   v_Position = vec3(u_VMatrix * u_MMatrix * a_Position);            \n"
                     + "   v_Color = a_Color;                                               \n"
                     + "   v_Normal = vec3(u_NMatrix * vec4(a_Normal, 0.0));               \n"
                     + "   v_textureCoord = a_textureCoord;                                  \n"

@@ -35,10 +35,10 @@
             app:layout_constraintRight_toRightOf="@+id/activity_main"
             app:layout_constraintTop_toTopOf="@+id/activity_main" />
 
+        <com.asus.glview.GLView
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></com.asus.glview.GLView>
     </LinearLayout>
-    <com.asus.glview.GLView
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"></com.asus.glview.GLView>
 
 </android.support.constraint.ConstraintLayout>

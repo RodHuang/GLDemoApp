@@ -20,6 +20,8 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
     private final float[] mMatrixProjection = new float[16];
     private final float[] mMatrixView = new float[16];
     private final float[] mMatrixProjectionAndView = new float[16];
+    private int mScreenWidth;
+    private int mScreenHeight;
 
     final World world = new World();
 
@@ -47,9 +49,11 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
             mMatrixView[i] = 0.0f;
             mMatrixProjectionAndView[i] = 0.0f;
         }
+        mScreenWidth = width;
+        mScreenHeight = height;
+        GLES20.glViewport(0, 0, mScreenWidth, mScreenHeight);
         float ratio = (float) width / (float) height;
         Matrix.frustumM(mMatrixProjection, 0, -ratio, ratio, -1, 1, 1, 100);
-        GLES20.glViewport(0, 0, width, height);
         Mesh.setLightPos(new float[]{-15f, 15f, 15f});
     }
 
@@ -58,6 +62,7 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT
                 | GLES20.GL_DEPTH_BUFFER_BIT);
 
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
         Matrix.setLookAtM(mMatrixView, 0, 0, 0, 3f, 0, 0,
                 0f, 0, 1, 0.0f);
 
@@ -68,4 +73,7 @@ public class GLES20Renderer implements GLSurfaceView.Renderer {
         return world;
     }
 
+    public void draw() {
+        world.draw(mMatrixView, mMatrixProjection);
+    }
 }
